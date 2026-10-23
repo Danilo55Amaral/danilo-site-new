@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    /* as âncoras do menu param abaixo do cabeçalho fixo */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply min-h-screen bg-da-bg font-sans text-slate-300 antialiased;
+  }
+
+  ::selection {
+    @apply bg-violet-500/30 text-white;
+  }
+
+  /* Na troca de tema as cores mudam de uma vez, sem as transições dos cartões no meio */
+  html.da-theme-switching *,
+  html.da-theme-switching *::before,
+  html.da-theme-switching *::after {
+    transition: none !important;
+  }
+}
+
+@layer components {
+  .da-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .da-section {
+    @apply relative py-24 sm:py-28;
+  }
+
+  .da-card {
+    @apply rounded-3xl border border-slate-800/80 bg-da-card;
+  }
+
+  .da-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-da-ink shadow-lg shadow-violet-500/10 transition-transform hover:scale-[1.03] active:scale-[0.99];
+  }
+
+  .da-btn-accent {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-violet-600 bg-[length:200%_100%] px-6 py-3.5 text-sm font-semibold text-da-onaccent shadow-lg shadow-fuchsia-500/25 transition-[transform,background-position] duration-500 hover:scale-[1.03] hover:bg-right active:scale-[0.99];
+  }
+
+  .da-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-da-raised/80 px-6 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur transition-colors hover:border-slate-500 hover:text-white;
+  }
+
+  .da-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-da-raised px-3 py-1 text-xs font-medium text-slate-300;
+  }
+
+  .da-input {
+    @apply w-full rounded-2xl border border-slate-800 bg-da-sunken px-4 py-3.5 text-sm text-slate-100 transition-colors placeholder:text-slate-600 focus:border-violet-500/70 focus:outline-none focus:ring-4 focus:ring-violet-500/10;
+  }
+
+  /* Logos pretos (GitHub, Next, Vercel...): ficam brancos no tema escuro */
+  html:not(.light) .da-invert {
+    filter: invert(1) brightness(1.1);
+  }
+
+  .da-label {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500;
+  }
+
+  /* Texto em degradê (violeta → rosa → ciano). No claro os tons escurecem sozinhos. */
+  .da-gradient-text {
+    @apply bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-300 bg-clip-text text-transparent;
+  }
+
+  /* Grade de fundo que some nas bordas (topo e seções de destaque) */
+  .da-grid {
+    background-image:
+      linear-gradient(to right, rgb(var(--da-c-slate-800, 30 41 59) / 0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--da-c-slate-800, 30 41 59) / 0.45) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+  }
+
+  /* Cartão com o brilho que segue o mouse (ver components/Spotlight.tsx) */
+  .da-spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .da-spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--da-glow, 139 92 246) / 0.14), transparent 45%);
+  }
+  .da-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* Borda em degradê girando (moldura da foto e do cartão do CodeGuilds) */
+  .da-ring {
+    position: relative;
+    isolation: isolate;
+  }
+  .da-ring::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(from var(--da-angle, 0deg), #8b5cf6, #d946ef, #22d3ee, #34d399, #8b5cf6);
+    animation: da-rotate 6s linear infinite;
+  }
+
+  /* Aparece subindo quando entra na tela (components/Reveal.tsx) */
+  .da-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--da-delay, 0ms);
+  }
+  .da-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   ANIMAÇÕES — aurora do fundo, faixa de tecnologias, cartões flutuando, cursor
+   da digitação e a borda girando. Quem pede menos movimento no sistema
+   (prefers-reduced-motion) recebe tudo parado.
+   ============================================================================ */
+
+@property --da-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes da-rotate {
+  to {
+    --da-angle: 360deg;
+  }
+}
+@keyframes da-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes da-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes da-aurora {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(6%, -4%, 0) scale(1.08); }
+  66% { transform: translate3d(-5%, 5%, 0) scale(0.96); }
+}
+@keyframes da-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes da-ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes da-shine {
+  from { transform: translateX(-120%) skewX(-20deg); }
+  to { transform: translateX(220%) skewX(-20deg); }
+}
+
+.da-animate-marquee {
+  animation: da-marquee 38s linear infinite;
+}
+.da-animate-float {
+  animation: da-float 6s ease-in-out infinite;
+}
+.da-animate-aurora {
+  animation: da-aurora 18s ease-in-out infinite;
+}
+.da-animate-blink {
+  animation: da-blink 1s step-end infinite;
+}
+.da-animate-ping {
+  animation: da-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.da-marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .da-animate-marquee,
+  .da-animate-float,
+  .da-animate-aurora,
+  .da-animate-ping,
+  .da-ring::before {
+    animation: none;
+  }
+  .da-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
