@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     "Next.js",
     "React",
     "CodeGuilds",
+    "Recife",
     "Pernambuco",
   ],
   authors: [{ name: PROFILE.name, url: PROFILE.siteUrl }],
@@ -57,7 +58,8 @@ const PERSON_JSON_LD = {
   image: `${PROFILE.siteUrl}${PROFILE.photo}`,
   jobTitle: PROFILE.roles,
   alumniOf: "Centro Universitário Leonardo Da Vinci (UNIASSELVI)",
-  address: { "@type": "PostalAddress", addressLocality: "Vitória de Santo Antão", addressRegion: "PE", addressCountry: "BR" },
+  address: { "@type": "PostalAddress", addressLocality: "Recife", addressRegion: "PE", addressCountry: "BR" },
+  birthPlace: { "@type": "Place", name: "Vitória de Santo Antão, PE, Brasil" },
   sameAs: [LINKS.github, LINKS.linkedin, LINKS.instagram],
 };
 

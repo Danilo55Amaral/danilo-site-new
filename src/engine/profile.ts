@@ -7,12 +7,15 @@ export const PROFILE = {
   name: "Danilo Amaral",
   fullName: "Danilo Gabriel Amaral Ferreira",
   photo: "/img/danilo.webp",
+  /** Onde mora hoje (topo e Sobre). */
   location: "Recife, Pernambuco",
+  /** Onde nasceu (Sobre). */
+  hometown: "Vitória de Santo Antão, Pernambuco",
   /** Os cargos que se revezam no topo, digitados um de cada vez. */
   roles: ["Engenheiro de Software", "Cientista de Dados", "Professor de Programação"],
   /** O ano em que começou na área de TI (Brisanet), pra contar os anos de experiência. */
   careerStart: 2019,
-  siteUrl: "https://danilo-landing-page.vercel.app",
+  siteUrl: "https://danilo-site-new.vercel.app",
 };
 
 export const LINKS = {

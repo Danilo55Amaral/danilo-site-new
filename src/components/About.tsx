@@ -37,8 +37,9 @@ export default function About() {
               <div>
                 <p className="font-display text-2xl font-bold text-white">{PROFILE.name}</p>
                 <p className="flex items-center gap-1.5 text-sm text-slate-500">
-                  <MapPinIcon className="h-4 w-4" /> Natural de {PROFILE.location}
+                  <MapPinIcon className="h-4 w-4 shrink-0" /> Mora em {PROFILE.location}
                 </p>
+                <p className="pl-[1.375rem] text-xs text-slate-600">Natural de {PROFILE.hometown}</p>
               </div>
             </div>
 
