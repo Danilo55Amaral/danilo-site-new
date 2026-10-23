@@ -66,15 +66,20 @@ export function heroStats(): Stat[] {
 export interface NavItem {
   id: string;
   label: string;
+  /** "/#secao" (âncora da home, funciona de qualquer página) ou uma página. */
+  href: string;
 }
 
-/** As seções do menu, na ordem da página (o id é a âncora de cada uma). */
+/** O catálogo de serviços com preços (página própria). */
+export const CATALOG_PATH = "/catalogo";
+
+/** O menu: as seções da home, na ordem da página, e o catálogo de preços. */
 export const NAV: NavItem[] = [
-  { id: "inicio", label: "Início" },
-  { id: "servicos", label: "Serviços" },
-  { id: "codeguilds", label: "CodeGuilds" },
-  { id: "sobre", label: "Sobre" },
-  { id: "projetos", label: "Projetos" },
-  { id: "ensino", label: "Ensino" },
-  { id: "contato", label: "Contato" },
+  { id: "servicos", label: "Serviços", href: "/#servicos" },
+  { id: "codeguilds", label: "CodeGuilds", href: "/#codeguilds" },
+  { id: "sobre", label: "Sobre", href: "/#sobre" },
+  { id: "projetos", label: "Projetos", href: "/#projetos" },
+  { id: "ensino", label: "Ensino", href: "/#ensino" },
+  { id: "precos", label: "Preços", href: CATALOG_PATH },
+  { id: "contato", label: "Contato", href: "/#contato" },
 ];

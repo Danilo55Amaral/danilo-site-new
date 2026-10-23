@@ -10,6 +10,8 @@ export type Accent = "violet" | "fuchsia" | "cyan" | "emerald" | "amber" | "sky"
 
 export interface Service {
   id: ServiceId;
+  /** Fora de venda no momento: o cartão mostra o aviso em vez do link pro catálogo. */
+  unavailable?: string;
   title: string;
   /** A frase de venda, logo abaixo do título. */
   pitch: string;
@@ -49,9 +51,10 @@ export const SERVICES: Service[] = [
   },
   {
     id: "aulas",
+    unavailable: "Indisponível no momento",
     title: "Aulas & Mentoria",
-    pitch: "Aulas de programação para iniciantes, turmas e empresas — da lógica ao primeiro app ou jogo publicado.",
-    deliverables: ["Lógica, JavaScript, Python e mais", "Criação de apps e jogos 2D e 3D", "Aulas particulares, turmas e workshops"],
+    pitch: "Hoje dou aulas só na Passaporte Edu, como Professor de Tecnologia. Aulas particulares e turmas próprias: em breve.",
+    deliverables: ["Lógica, JavaScript, Python e mais", "Criação de apps e jogos 2D e 3D", "Aulas particulares e mentorias (em breve)"],
     accent: "amber",
   },
   {

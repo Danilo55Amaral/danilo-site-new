@@ -19,7 +19,7 @@ export interface ContactForm {
 }
 
 export const SERVICE_OPTIONS: { id: ContactForm["service"]; label: string }[] = [
-  ...SERVICES.map((s) => ({ id: s.id, label: s.title })),
+  ...SERVICES.filter((s) => !s.unavailable).map((s) => ({ id: s.id, label: s.title })),
   { id: "outro", label: "Outro assunto" },
 ];
 

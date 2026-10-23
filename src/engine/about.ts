@@ -119,7 +119,7 @@ export const FAQ: FaqItem[] = [
   {
     question: "O que Danilo Amaral oferece?",
     answer:
-      "Desenvolvimento de sites, sistemas web e APIs sob medida, projetos de ciência de dados, consultorias em tecnologia e aulas de programação para pessoas, turmas e empresas.",
+      "Desenvolvimento de sites, lojas virtuais, sistemas web e APIs sob medida, projetos de ciência de dados e consultorias em tecnologia.",
   },
   {
     question: "Quais são as suas áreas de especialização?",
@@ -150,6 +150,6 @@ export const FAQ: FaqItem[] = [
   {
     question: "Você dá aulas particulares ou para empresas?",
     answer:
-      "Sim. Além das turmas na Passaporte Edu, dou aulas particulares, mentorias e workshops de programação para escolas e empresas, do zero ao avançado.",
+      "No momento, não. Minhas aulas são exclusivas da Passaporte Edu, onde sou Professor de Tecnologia. Aulas particulares, mentorias e turmas próprias estão em definição e devem chegar em breve.",
   },
 ];

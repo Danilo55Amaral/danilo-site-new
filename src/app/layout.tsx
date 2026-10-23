@@ -3,6 +3,9 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { THEME_INIT_SCRIPT } from "@/engine/theme";
 import { LINKS, PROFILE } from "@/engine/profile";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const display = Space_Grotesk({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display", display: "swap" });
@@ -10,7 +13,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variab
 
 const TITLE = `${PROFILE.name} — Engenheiro de Software, Cientista de Dados e Professor de Programação`;
 const DESCRIPTION =
-  "Sites, sistemas web, APIs e projetos de dados sob medida, além de aulas de programação. Conheça os projetos de Danilo Amaral, fundador e desenvolvedor do CodeGuilds.";
+  "Sites, lojas virtuais, sistemas web, APIs, projetos de dados e consultoria sob medida. Conheça os projetos de Danilo Amaral, fundador e desenvolvedor do CodeGuilds.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(PROFILE.siteUrl),
@@ -71,7 +74,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* cabeçalho, rodapé e WhatsApp são os mesmos na home e no catálogo */}
+        <Header />
+        {children}
+        <Footer />
+        <FloatingWhatsApp />
+      </body>
     </html>
   );
 }

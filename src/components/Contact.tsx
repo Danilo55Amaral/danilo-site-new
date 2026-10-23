@@ -1,28 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
 import { ContactForm, SERVICE_OPTIONS, WHATSAPP_PHONE, buildMessage, whatsappUrl } from "@/engine/contact";
-import { SOCIALS } from "@/engine/profile";
-import { usePickedService } from "@/engine/store";
+import { CATALOG_PATH, SOCIALS } from "@/engine/profile";
 import Reveal from "./Reveal";
-import { ArrowUpRightIcon, CheckIcon, SendIcon, SocialIcon } from "./Icons";
+import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, SendIcon, SocialIcon, TagIcon } from "./Icons";
 
 // ============================================================================
-// CONTATO — a chamada final: o formulário (que vira uma mensagem no WhatsApp,
-// ver engine/contact.ts) e os cartões das redes. O serviço escolhido num
-// cartão ("Quero esse serviço") já chega marcado.
+// CONTATO — a chamada final da home: o formulário rápido (que vira uma
+// mensagem no WhatsApp, ver engine/contact.ts), os cartões das redes e o
+// atalho pro catálogo, onde fica o pedido de orçamento completo.
 // ============================================================================
 
 const EMPTY: ContactForm = { name: "", service: "sites", message: "" };
 
 export default function Contact() {
-  const picked = usePickedService();
   const [form, setForm] = useState<ContactForm>(EMPTY);
   const [sent, setSent] = useState(false);
-
-  useEffect(() => {
-    if (picked) setForm((f) => ({ ...f, service: picked }));
-  }, [picked]);
 
   const canSend = form.name.trim().length > 1 && form.message.trim().length > 4;
 
@@ -60,7 +55,7 @@ export default function Contact() {
                   Vamos tirar o seu projeto <span className="da-gradient-text">do papel?</span>
                 </h2>
                 <p className="text-base leading-relaxed text-slate-400 sm:text-lg">
-                  Conte o que você precisa: um site, um sistema, uma análise de dados ou aulas de programação. A primeira conversa é sem
+                  Conte o que você precisa: um site, uma loja, um sistema ou uma análise de dados. A primeira conversa é sem
                   compromisso e você recebe uma proposta clara.
                 </p>
 
@@ -89,6 +84,20 @@ export default function Contact() {
                     </li>
                   ))}
                 </ul>
+
+                <Link
+                  href={CATALOG_PATH}
+                  className="group flex items-center gap-4 rounded-2xl border border-violet-500/30 bg-violet-500/10 p-4 transition-colors hover:border-violet-500/60"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-da-ink">
+                    <TagIcon className="h-5 w-5" />
+                  </span>
+                  <span className="flex flex-1 flex-col">
+                    <span className="text-sm font-semibold text-white">Prefere ver os preços antes?</span>
+                    <span className="text-xs text-slate-400">Catálogo com valores, prazos e agendamento online</span>
+                  </span>
+                  <ArrowRightIcon className="h-4 w-4 text-violet-300 transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
 
               <form onSubmit={submit} className="flex flex-col gap-5 rounded-3xl border border-slate-800/80 bg-da-bg/60 p-6 backdrop-blur sm:p-8">

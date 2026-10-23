@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NAV, PROFILE, SOCIALS } from "@/engine/profile";
 import { Logo } from "./Header";
 import { SocialIcon } from "./Icons";
@@ -16,9 +17,9 @@ export default function Footer() {
           </div>
           <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Rodapé">
             {NAV.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="text-sm text-slate-400 transition-colors hover:text-white">
+              <Link key={n.id} href={n.href} className="text-sm text-slate-400 transition-colors hover:text-white">
                 {n.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

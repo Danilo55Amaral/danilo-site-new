@@ -1,36 +1,42 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LINKS, NAV, PROFILE } from "@/engine/profile";
+import { CATALOG_PATH, LINKS, NAV, PROFILE } from "@/engine/profile";
 import { useActiveSection, useScroll } from "@/engine/store";
 import ThemeToggle from "./ThemeToggle";
 import { CloseIcon, MenuIcon, SocialIcon } from "./Icons";
 
-const SECTION_IDS = NAV.map((n) => n.id);
+const SECTION_IDS = NAV.filter((n) => n.href.startsWith("/#")).map((n) => n.id);
 
 /** O monograma "DA" com o degradê da marca. */
 export function Logo() {
   return (
-    <a href="#inicio" className="group flex items-center gap-2.5" aria-label={`${PROFILE.name} — início`}>
+    <Link href="/" className="group flex items-center gap-2.5" aria-label={`${PROFILE.name} — início`}>
       <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-400 font-display text-sm font-bold text-da-onaccent shadow-lg shadow-fuchsia-500/30 transition-transform group-hover:rotate-6">
         DA
       </span>
       <span className="font-display text-base font-bold tracking-tight text-white">
         Danilo<span className="text-fuchsia-400">.</span>dev
       </span>
-    </a>
+    </Link>
   );
 }
 
 /**
  * Cabeçalho fixo: transparente no topo, vidro fosco depois de rolar. O link da
- * seção que está na tela fica marcado, e a barrinha embaixo mostra quanto da
- * página já foi lido. No celular, o menu abre em tela cheia.
+ * seção que está na tela fica marcado (no catálogo, o "Preços"), e a barrinha
+ * embaixo mostra quanto da página já foi lido. No celular, o menu abre em tela
+ * cheia. O botão da direita leva pro catálogo — e, dentro dele, pro pedido.
  */
 export default function Header() {
   const { progress, scrolled } = useScroll();
-  const active = useActiveSection(SECTION_IDS);
+  const onCatalog = usePathname() === CATALOG_PATH;
+  const section = useActiveSection(onCatalog ? [] : SECTION_IDS);
+  const active = onCatalog ? "precos" : section;
   const [open, setOpen] = useState(false);
+  const cta = onCatalog ? { href: "#pedido", label: "Fazer pedido" } : { href: CATALOG_PATH, label: "Ver preços" };
 
   // Menu aberto no celular: trava a rolagem da página por baixo, e o Esc fecha
   useEffect(() => {
@@ -56,23 +62,23 @@ export default function Header() {
 
           <nav className="hidden items-center gap-1 rounded-full border border-slate-800/80 bg-da-card/60 p-1 backdrop-blur lg:flex" aria-label="Seções do site">
             {NAV.map((item) => (
-              <a
+              <Link
                 key={item.id}
-                href={`#${item.id}`}
+                href={item.href}
                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                  active === item.id ? "bg-white text-da-ink" : "text-slate-400 hover:text-white"
+                  active === item.id ? "bg-white text-da-ink" : item.id === "precos" ? "text-fuchsia-300 hover:text-white" : "text-slate-400 hover:text-white"
                 }`}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <a href="#contato" className="da-btn-accent hidden !px-5 !py-2.5 sm:inline-flex">
-              Vamos conversar
-            </a>
+            <Link href={cta.href} className="da-btn-accent hidden !px-5 !py-2.5 sm:inline-flex">
+              {cta.label}
+            </Link>
             <button
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? "Fechar menu" : "Abrir menu"}
@@ -96,16 +102,18 @@ export default function Header() {
       {open && (
         <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col gap-2 overflow-y-auto bg-da-bg px-4 pb-10 pt-6 lg:hidden">
           {NAV.map((item, i) => (
-            <a
+            <Link
               key={item.id}
-              href={`#${item.id}`}
+              href={item.href}
               onClick={() => setOpen(false)}
-              className="da-reveal is-visible flex items-center justify-between rounded-2xl border border-slate-800 bg-da-card px-5 py-4 font-display text-lg font-semibold text-white"
+              className={`da-reveal is-visible flex items-center justify-between rounded-2xl border px-5 py-4 font-display text-lg font-semibold text-white ${
+                item.id === "precos" ? "border-fuchsia-500/40 bg-fuchsia-500/10" : "border-slate-800 bg-da-card"
+              }`}
               style={{ "--da-delay": `${i * 40}ms` } as React.CSSProperties}
             >
               {item.label}
-              <span className="text-sm text-slate-600">0{i + 1}</span>
-            </a>
+              <span className="text-sm text-slate-600">{item.id === "precos" ? "Catálogo" : `0${i + 1}`}</span>
+            </Link>
           ))}
           <a href={LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="da-btn-accent mt-4">
             <SocialIcon id="whatsapp" className="h-4 w-4" /> Falar no WhatsApp

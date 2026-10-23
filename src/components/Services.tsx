@@ -1,9 +1,12 @@
+import Link from "next/link";
+import { AVAILABLE_ITEMS } from "@/engine/catalog";
+import { CATALOG_PATH } from "@/engine/profile";
 import { Accent, PROCESS, SERVICES } from "@/engine/services";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import Spotlight from "./Spotlight";
 import ServiceLink from "./ServiceLink";
-import { ArrowUpRightIcon, CheckIcon, ServiceIcon } from "./Icons";
+import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, ServiceIcon, TagIcon } from "./Icons";
 
 // ============================================================================
 // SERVIÇOS — os seis cartões do que o Danilo vende (cada um com o brilho que
@@ -29,7 +32,7 @@ export default function Services() {
           eyebrow="Serviços"
           title="Como posso"
           highlight="acelerar o seu negócio"
-          description="Da landing page que vende ao sistema que organiza a empresa inteira — e as aulas que formam quem vai construir o próximo. Escolha por onde começar."
+          description="Da landing page que vende ao sistema que organiza a empresa inteira — com dados e consultoria para decidir melhor. Escolha por onde começar."
         />
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -44,9 +47,16 @@ export default function Services() {
                   <div
                     className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r ${style.line} to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
                   />
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${style.icon}`}>
-                    <ServiceIcon id={service.id} />
-                  </span>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${style.icon}`}>
+                      <ServiceIcon id={service.id} />
+                    </span>
+                    {service.unavailable && (
+                      <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold text-amber-300">
+                        {service.unavailable}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex flex-col gap-2">
                     <h3 className="font-display text-xl font-bold text-white">{service.title}</h3>
                     <p className="text-sm leading-relaxed text-slate-400">{service.pitch}</p>
@@ -59,17 +69,42 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
-                  <ServiceLink
-                    service={service.id}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-colors hover:text-fuchsia-300"
-                  >
-                    Quero esse serviço <ArrowUpRightIcon className="h-4 w-4" />
-                  </ServiceLink>
+                  {service.unavailable ? (
+                    <span className="text-sm font-semibold text-slate-500">Em breve</span>
+                  ) : (
+                    <ServiceLink
+                      service={service.id}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-colors hover:text-fuchsia-300"
+                    >
+                      Ver pacotes e preços <ArrowUpRightIcon className="h-4 w-4" />
+                    </ServiceLink>
+                  )}
                 </Spotlight>
               </Reveal>
             );
           })}
         </div>
+
+        {/* chamada pro catálogo */}
+        <Reveal className="mt-10">
+          <div className="relative flex flex-col items-start justify-between gap-6 overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-r from-violet-600/20 via-fuchsia-600/10 to-cyan-500/10 p-7 sm:flex-row sm:items-center sm:p-9">
+            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" aria-hidden="true" />
+            <div className="relative flex items-center gap-4">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-da-ink shadow-lg">
+                <TagIcon className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="font-display text-xl font-bold text-white sm:text-2xl">Catálogo completo com preços</p>
+                <p className="text-sm text-slate-400">
+                  {AVAILABLE_ITEMS.length} serviços com valores, prazos e o que está incluso. Monte a estimativa e peça o seu orçamento.
+                </p>
+              </div>
+            </div>
+            <Link href={CATALOG_PATH} className="da-btn-primary group relative shrink-0">
+              Abrir catálogo <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </Reveal>
 
         {/* COMO TRABALHO */}
         <div className="mt-24">

@@ -1,5 +1,5 @@
 import type { SocialId } from "@/engine/profile";
-import type { ServiceId } from "@/engine/services";
+import type { CategoryId } from "@/engine/catalog";
 
 // ============================================================================
 // ÍCONES — SVGs desenhados à mão (sem biblioteca de ícones). Todos usam
@@ -125,6 +125,42 @@ export function ExpandIcon(p: IconProps) {
   );
 }
 
+export function CalendarIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17.2h.01M12 17.2h.01" />
+    </Svg>
+  );
+}
+
+export function ClockIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </Svg>
+  );
+}
+
+export function ShieldIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z" />
+      <path d="m8.8 12.2 2.2 2.2 4.3-4.5" />
+    </Svg>
+  );
+}
+
+export function TagIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.7 6.7a1.5 1.5 0 0 1-2.1 0L3.5 12.3z" />
+      <circle cx="8" cy="8" r="1.4" />
+    </Svg>
+  );
+}
+
 export function GraduationIcon(p: IconProps) {
   return (
     <Svg {...p}>
@@ -138,7 +174,7 @@ export function GraduationIcon(p: IconProps) {
 // Serviços
 // ---------------------------------------------------------------------------
 
-const SERVICE_PATHS: Record<ServiceId, React.ReactNode> = {
+const SERVICE_PATHS: Record<CategoryId, React.ReactNode> = {
   sites: (
     <>
       <rect x="3" y="4" width="18" height="15" rx="2.5" />
@@ -151,6 +187,13 @@ const SERVICE_PATHS: Record<ServiceId, React.ReactNode> = {
       <rect x="13.5" y="3" width="7.5" height="4.5" rx="1.8" />
       <rect x="13.5" y="10.5" width="7.5" height="10.5" rx="2" />
       <rect x="3" y="13.5" width="7.5" height="7.5" rx="2" />
+    </>
+  ),
+  lojas: (
+    <>
+      <path d="M3 4h2.2l2.1 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.9-1.4L21 8H6.1" />
+      <circle cx="10" cy="19.5" r="1.3" />
+      <circle cx="17" cy="19.5" r="1.3" />
     </>
   ),
   apis: (
@@ -180,7 +223,7 @@ const SERVICE_PATHS: Record<ServiceId, React.ReactNode> = {
   ),
 };
 
-export function ServiceIcon({ id, className = "h-6 w-6" }: { id: ServiceId; className?: string }) {
+export function ServiceIcon({ id, className = "h-6 w-6" }: { id: CategoryId; className?: string }) {
   return <Svg className={className}>{SERVICE_PATHS[id]}</Svg>;
 }
 

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Theme, applyTheme, getTheme, setTheme } from "./theme";
-import type { ServiceId } from "./services";
 
 // ============================================================================
 // STORE — os hooks que as telas usam pra ler o estado do navegador (tema,
@@ -64,20 +63,24 @@ export function useTheme() {
   return { theme, toggle };
 }
 
-// O serviço escolhido num cartão ("Quero esse serviço"), que já vem marcado no formulário de contato
-let pickedService: ServiceId | null = null;
+// O serviço escolhido num cartão do catálogo ("Escolher" / "Agendar"), que
+// já chega marcado no painel de pedido. O `nonce` muda a cada clique, pra o
+// painel reagir mesmo quando o visitante clica de novo no mesmo serviço.
+export type PickMode = "orcamento" | "agendamento";
+let picked: { itemId: string; mode: PickMode; note?: string; nonce: number } | null = null;
 
-export function pickService(id: ServiceId) {
-  pickedService = id;
+/** `note` vai pros detalhes do pedido (ex.: "Cobrança anual"). */
+export function pickCatalogItem(itemId: string, mode: PickMode, note?: string) {
+  picked = { itemId, mode, note, nonce: Date.now() };
   emitChange();
 }
 
-/** O serviço que o visitante escolheu nos cartões (null até escolher). */
-export function usePickedService() {
-  const [service, setService] = useState<ServiceId | null>(null);
-  const sync = useCallback(() => setService(pickedService), []);
+/** O último serviço escolhido nos cartões do catálogo (null até escolher). */
+export function useCatalogPick() {
+  const [pick, setPick] = useState(picked);
+  const sync = useCallback(() => setPick(picked), []);
   useSyncOnChange(sync);
-  return service;
+  return pick;
 }
 
 /** Quanto da página já foi rolado (0 a 1) e se saiu do topo — pro cabeçalho e a barra de progresso. */

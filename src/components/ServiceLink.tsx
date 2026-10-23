@@ -1,13 +1,12 @@
-"use client";
+import Link from "next/link";
+import type { CategoryId } from "@/engine/catalog";
+import { CATALOG_PATH } from "@/engine/profile";
 
-import type { ServiceId } from "@/engine/services";
-import { pickService } from "@/engine/store";
-
-/** Link que leva pro formulário de contato com o serviço já marcado. */
-export default function ServiceLink({ service, className, children }: { service: ServiceId; className?: string; children: React.ReactNode }) {
+/** Link pra categoria do serviço no catálogo de preços (ex.: /catalogo#sites). */
+export default function ServiceLink({ service, className, children }: { service: CategoryId; className?: string; children: React.ReactNode }) {
   return (
-    <a href="#contato" onClick={() => pickService(service)} className={className}>
+    <Link href={`${CATALOG_PATH}#${service}`} className={className}>
       {children}
-    </a>
+    </Link>
   );
 }

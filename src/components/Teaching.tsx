@@ -2,15 +2,14 @@ import Image from "next/image";
 import { COURSES } from "@/engine/about";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
-import ServiceLink from "./ServiceLink";
-import { ArrowRightIcon, CheckIcon } from "./Icons";
 
 // ============================================================================
-// ENSINO — o Danilo professor: o que ensina na Passaporte Edu, os formatos de
-// aula que oferece e o CodeGuilds como a sala de aula gamificada dele.
+// ENSINO — o Danilo professor: o que ensina na Passaporte Edu e o CodeGuilds
+// como a sala de aula gamificada dele. Aulas particulares e turmas próprias
+// ainda não estão abertas (o aviso fica no cartão da direita).
 // ============================================================================
 
-const FORMATS = ["Aulas particulares (online ou presencial)", "Turmas para escolas e cursos", "Workshops e mentorias para empresas"];
+const COMING_SOON = ["Aulas particulares", "Mentorias de carreira", "Turmas e workshops"];
 
 export default function Teaching() {
   return (
@@ -50,16 +49,19 @@ export default function Teaching() {
                 Nas minhas turmas, os alunos estudam no <strong className="text-white">CodeGuilds</strong>, a plataforma gamificada que
                 criei: cada conteúdo vira missão, cada acerto vale XP e a turma inteira joga junta pelas casas.
               </p>
-              <ul className="relative flex flex-col gap-2.5">
-                {FORMATS.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                    <CheckIcon className="h-4 w-4 shrink-0 text-emerald-400" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <ServiceLink service="aulas" className="da-btn-primary group relative mt-auto self-start">
-                Agendar uma aula <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </ServiceLink>
+              <div className="relative mt-auto flex flex-col gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
+                <p className="text-sm font-bold text-amber-300">Aulas fora da Passaporte Edu: indisponível no momento</p>
+                <p className="text-xs leading-relaxed text-slate-400">
+                  Hoje minhas aulas são exclusivas da Passaporte Edu, onde sou Professor de Tecnologia. Estes formatos estão em definição:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {COMING_SOON.map((f) => (
+                    <span key={f} className="rounded-full border border-slate-700 bg-da-raised px-3 py-1 text-xs font-medium text-slate-400">
+                      {f} · em breve
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>

@@ -193,15 +193,14 @@ export default function CodeGuildsShowcase() {
                 </div>
                 <p className="text-sm leading-relaxed text-slate-400">
                   Uma plataforma completa, do zero: painéis de aluno, professor e administrador, API própria com login seguro, entregas de
-                  arquivos na nuvem e eventos sazonais com chefões. Quer levar o CodeGuilds para a sua escola ou criar algo assim para o seu
-                  negócio?
+                  arquivos na nuvem e eventos sazonais com chefões. Quer uma plataforma assim para a sua escola ou para o seu negócio?
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <ServiceLink
-                    service="aulas"
+                    service="sistemas"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-6 py-3.5 text-sm font-bold text-[#1a1203] shadow-lg shadow-amber-500/25 transition-transform hover:scale-[1.03]"
                   >
-                    Quero na minha escola <ArrowUpRightIcon className="h-4 w-4" />
+                    Quero uma plataforma assim <ArrowUpRightIcon className="h-4 w-4" />
                   </ServiceLink>
                   <a
                     href={GUILD_REPO}

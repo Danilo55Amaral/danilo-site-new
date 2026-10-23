@@ -1,4 +1,4 @@
-import { FAQ } from "@/engine/about";
+import { FAQ, FaqItem } from "@/engine/about";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import { PlusIcon } from "./Icons";
@@ -6,23 +6,32 @@ import { PlusIcon } from "./Icons";
 /**
  * Perguntas frequentes em <details>: abre e fecha sem JavaScript, e o Google
  * lê as respostas mesmo fechadas. O "+" vira "×" quando a pergunta está aberta.
+ * Sem props, mostra o FAQ geral da home; o catálogo passa as perguntas de preço.
  */
-export default function Faq() {
+export default function Faq({
+  items = FAQ,
+  id = "faq",
+  eyebrow = "FAQ",
+  title = "Perguntas",
+  highlight = "frequentes",
+  description = "Não achou o que procurava? Me chama no WhatsApp — respondo rapidinho.",
+}: {
+  items?: FaqItem[];
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  highlight?: string;
+  description?: string;
+}) {
   return (
-    <section id="faq" className="da-section bg-da-surface/40">
+    <section id={id} className="da-section bg-da-surface/40">
       <div className="da-container grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <SectionHeading
-            align="left"
-            eyebrow="FAQ"
-            title="Perguntas"
-            highlight="frequentes"
-            description="Não achou o que procurava? Me chama no WhatsApp — respondo rapidinho."
-          />
+        <div className="lg:sticky lg:top-36 lg:self-start">
+          <SectionHeading align="left" eyebrow={eyebrow} title={title} highlight={highlight} description={description} />
         </div>
 
         <div className="flex flex-col gap-3">
-          {FAQ.map((item, i) => (
+          {items.map((item, i) => (
             <Reveal key={item.question} delay={i * 50}>
               <details className="da-card group p-0 transition-colors open:border-violet-500/40" open={i === 0}>
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-display text-base font-semibold text-white [&::-webkit-details-marker]:hidden">

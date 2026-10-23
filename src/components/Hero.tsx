@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { PROFILE, SOCIALS, heroStats } from "@/engine/profile";
+import Link from "next/link";
+import { CATALOG_PATH, PROFILE, SOCIALS, heroStats } from "@/engine/profile";
 import CountUp from "./CountUp";
 import TypingRoles from "./TypingRoles";
 import { ArrowRightIcon, GraduationIcon, SocialIcon } from "./Icons";
@@ -127,7 +128,7 @@ export default function Hero() {
               <span className="da-animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            Disponível para novos projetos e turmas
+            Disponível para novos projetos
           </span>
 
           <div className="flex flex-col gap-4">
@@ -149,10 +150,10 @@ export default function Hero() {
           </p>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <a href="#contato" className="da-btn-accent group">
-              Solicitar orçamento
+            <Link href={CATALOG_PATH} className="da-btn-accent group">
+              Ver serviços e preços
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
+            </Link>
             <a href="#projetos" className="da-btn-secondary">
               Ver projetos
             </a>
