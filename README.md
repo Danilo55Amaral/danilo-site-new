@@ -77,7 +77,7 @@ Depois de salvar, faça um novo deploy. Sem essas variáveis, o formulário cont
 - **WhatsApp com mensagem pronta**: preencha `WHATSAPP_PHONE` em `src/engine/contact.ts` (só números, com DDI e DDD). Vazio, o formulário copia a mensagem e abre o link curto do perfil.
 - **Novo projeto**: adicione em `PROJECTS` (`src/engine/projects.ts`) e a imagem em `public/img/projetos/`.
 - **Preços, prazos e pacotes**: `CATALOG`, `PLANS`, `ADDONS` e `PAYMENT_TERMS` em `src/engine/catalog.ts` (o comentário do topo explica a lógica dos preços). O site inteiro, a estimativa e o e-mail acompanham.
-- **Horários da agenda**: `SCHEDULE` em `src/engine/catalog.ts`.
+- **Agenda**: `SCHEDULE` em `src/engine/catalog.ts` — `weekdays` são os dias com atendimento (0 = domingo ... 6 = sábado; hoje domingo e segunda), `slots` os horários e `formats` os formatos (`available: false` mostra "indisponível no momento", como o presencial hoje). A API recusa dia ou formato indisponível.
 - **Pausar uma categoria** (como as aulas hoje): `unavailable` na categoria em `CATEGORIES` (`src/engine/catalog.ts`) e no serviço em `SERVICES` (`src/engine/services.ts`). Os cartões aparecem com o aviso, sem pedido nem agendamento, e a API recusa esses serviços. Para reabrir, apague a linha `unavailable`.
 
 © Danilo Amaral

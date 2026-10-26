@@ -6,7 +6,7 @@
 // pro Danilo.
 // ============================================================================
 
-import { ADDONS, estimate, formatBRL, getItem, isAvailable, isEstimable } from "./catalog";
+import { ADDONS, estimate, formatBRL, getItem, isAvailable, isDayAvailable, isEstimable, isFormatAvailable, parseIsoDate } from "./catalog";
 
 export const DEADLINES = [
   { id: "sem-pressa", label: "Sem pressa" },
@@ -82,7 +82,9 @@ export function validateRequest(r: UncheckedRequest): string | null {
   } else {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date ?? "")) return "Escolha o dia.";
     if (!r.time) return "Escolha o horário.";
-    if (!r.format) return "Escolha online ou presencial.";
+    if (!isDayAvailable(parseIsoDate(r.date!))) return "Esse dia está indisponível no momento. Escolha outro dia.";
+    if (!r.format) return "Escolha o formato do atendimento.";
+    if (!isFormatAvailable(r.format)) return "Esse formato está indisponível no momento.";
     if ((r.topic?.length ?? 0) > MAX.topic) return "O assunto passou de 1.000 caracteres.";
   }
   return null;

@@ -421,7 +421,7 @@ export const CATALOG: CatalogItem[] = [
     pitch: "Uma hora com um especialista para destravar uma decisão técnica importante.",
     from: 250,
     unit: "hora",
-    deadline: "Online ou presencial em Recife",
+    deadline: "Online, pelo Google Meet",
     features: [
       "Arquitetura, stack e boas práticas",
       "Revisão de código e de projeto",
@@ -637,14 +637,35 @@ export const GUARANTEES = [
 // Agenda (consultorias)
 // ---------------------------------------------------------------------------
 
+export interface ScheduleFormat {
+  label: string;
+  /** false = aparece no formulário como "indisponível no momento". */
+  available: boolean;
+}
+
 export const SCHEDULE = {
-  /** Quantos dias úteis à frente aparecem no calendário. */
-  days: 12,
-  /** Começa a mostrar a partir de N dias úteis (tempo pra confirmar). */
-  startIn: 1,
+  /** Quantos dias aparecem no calendário (duas semanas, a partir de amanhã). */
+  days: 14,
+  /**
+   * Os dias da semana com atendimento (0 = domingo, 1 = segunda ... 6 = sábado).
+   * Os outros aparecem no calendário como indisponíveis. Pra liberar um dia, é só pôr o número aqui.
+   */
+  weekdays: [0, 1],
   slots: ["09:00", "10:30", "14:00", "15:30", "17:00", "19:00"],
-  formats: ["Online (Google Meet)", "Presencial em Recife"],
+  formats: [
+    { label: "Online (Google Meet)", available: true },
+    // Pra voltar a atender presencialmente, troque pra true.
+    { label: "Presencial em Recife", available: false },
+  ] as ScheduleFormat[],
 };
+
+const WEEKDAY_NAMES = ["domingos", "segundas", "terças", "quartas", "quintas", "sextas", "sábados"];
+
+/** "domingos e segundas" — pra mostrar no formulário quais dias têm atendimento. */
+export function availableWeekdaysLabel(): string {
+  const names = [...SCHEDULE.weekdays].sort().map((d) => WEEKDAY_NAMES[d]);
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} e ${names[names.length - 1]}` : names[0] ?? "";
+}
 
 // ---------------------------------------------------------------------------
 // Regras
@@ -732,22 +753,26 @@ export function estimate(item: CatalogItem, addonIds: string[]): { min: number; 
   return { min: round((item.from + fixed) * factor), max: round((max + fixed) * factor) };
 }
 
-/** Os próximos dias úteis (seg a sex) para o calendário de agendamento. */
-export function nextBusinessDays(from = new Date(), count = SCHEDULE.days, startIn = SCHEDULE.startIn): Date[] {
+/** Os próximos dias (a partir de amanhã) para o calendário de agendamento — os indisponíveis inclusive. */
+export function nextDays(from = new Date(), count = SCHEDULE.days): Date[] {
   const days: Date[] = [];
-  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  let skipped = 0;
-  while (days.length < count) {
-    d.setDate(d.getDate() + 1);
-    const weekday = d.getDay();
-    if (weekday === 0 || weekday === 6) continue;
-    if (skipped < startIn - 1) {
-      skipped++;
-      continue;
-    }
-    days.push(new Date(d));
-  }
+  for (let i = 1; i <= count; i++) days.push(new Date(from.getFullYear(), from.getMonth(), from.getDate() + i));
   return days;
+}
+
+/** "2026-10-27" -> Date local (sem o fuso deslocar o dia). */
+export function parseIsoDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+/** O dia tem atendimento (é um dos `SCHEDULE.weekdays`). */
+export function isDayAvailable(date: Date): boolean {
+  return SCHEDULE.weekdays.includes(date.getDay());
+}
+
+export function isFormatAvailable(label: string): boolean {
+  return SCHEDULE.formats.some((f) => f.label === label && f.available);
 }
 
 // ---------------------------------------------------------------------------
@@ -783,6 +808,6 @@ export const CATALOG_FAQ = [
   {
     question: "Você atende só em Recife?",
     answer:
-      "Atendo o Brasil inteiro, online. Para clientes de Recife e região, as reuniões também podem ser presenciais.",
+      "Atendo o Brasil inteiro, online, pelo Google Meet. O atendimento presencial em Recife está indisponível no momento.",
   },
 ];

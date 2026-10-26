@@ -34,16 +34,29 @@ export function Step({ n, title, hint, children }: { n: number; title: string; h
   );
 }
 
-export function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+export function Chip({
+  active,
+  disabled = false,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={active}
       className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
-        active
-          ? "border-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600 text-da-onaccent shadow-md shadow-fuchsia-500/20"
-          : "border-slate-800 bg-da-raised text-slate-400 hover:border-slate-600 hover:text-white"
+        disabled
+          ? "cursor-not-allowed border-dashed border-slate-700 text-slate-500"
+          : active
+            ? "border-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600 text-da-onaccent shadow-md shadow-fuchsia-500/20"
+            : "border-slate-800 bg-da-raised text-slate-400 hover:border-slate-600 hover:text-white"
       }`}
     >
       {children}

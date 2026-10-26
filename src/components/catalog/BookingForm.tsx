@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AVAILABLE_ITEMS, SCHEDULE, nextBusinessDays, priceLabel } from "@/engine/catalog";
+import { AVAILABLE_ITEMS, SCHEDULE, availableWeekdaysLabel, isDayAvailable, nextDays, priceLabel } from "@/engine/catalog";
 import { BookingRequest } from "@/engine/requests";
 import { CalendarIcon } from "../Icons";
 import { Chip, ContactFields, ContactValues, EMPTY_CONTACT, Honeypot, Step } from "./fields";
@@ -14,8 +14,9 @@ function isoDate(d: Date): string {
 
 /**
  * O pedido de agendamento: o que agendar (diagnóstico grátis ou consultoria),
- * online ou presencial, o dia (próximos dias úteis), o horário e o assunto.
- * O horário só fica reservado quando o Danilo confirmar.
+ * o formato, o dia (as próximas duas semanas, só os dias de atendimento
+ * liberados — ver SCHEDULE), o horário e o assunto. O horário só fica reservado
+ * quando o Danilo confirmar.
  */
 export default function BookingForm({
   initialItem,
@@ -27,7 +28,7 @@ export default function BookingForm({
   onSubmit: (request: BookingRequest, honeypot: string) => void;
 }) {
   const [itemId, setItemId] = useState(initialItem ?? "diagnostico-gratuito");
-  const [format, setFormat] = useState(SCHEDULE.formats[0]);
+  const [format, setFormat] = useState(SCHEDULE.formats.find((f) => f.available)?.label ?? "");
   const [days, setDays] = useState<Date[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -36,7 +37,7 @@ export default function BookingForm({
   const [honeypot, setHoneypot] = useState("");
 
   // Os dias dependem do relógio do visitante: calcula só no navegador (sem divergir do HTML do servidor)
-  useEffect(() => setDays(nextBusinessDays()), []);
+  useEffect(() => setDays(nextDays()), []);
 
   useEffect(() => {
     if (initialItem && BOOKABLE.some((i) => i.id === initialItem)) setItemId(initialItem);
@@ -105,8 +106,9 @@ export default function BookingForm({
         <Step n={2} title="Formato">
           <div className="flex flex-wrap gap-2">
             {SCHEDULE.formats.map((f) => (
-              <Chip key={f} active={format === f} onClick={() => setFormat(f)}>
-                {f}
+              <Chip key={f.label} active={format === f.label} disabled={!f.available} onClick={() => setFormat(f.label)}>
+                {f.label}
+                {!f.available && <span className="ml-1 text-xs">· indisponível no momento</span>}
               </Chip>
             ))}
           </div>
@@ -114,21 +116,26 @@ export default function BookingForm({
       </div>
 
       <div className="flex flex-col gap-8">
-        <Step n={3} title="Escolha o dia">
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        <Step n={3} title="Escolha o dia" hint={`atendimento aos ${availableWeekdaysLabel()}`}>
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
             {days.map((d) => {
               const iso = isoDate(d);
               const active = date === iso;
+              const open = isDayAvailable(d);
               return (
                 <button
                   type="button"
                   key={iso}
                   onClick={() => setDate(iso)}
+                  disabled={!open}
                   aria-pressed={active}
-                  className={`flex flex-col items-center rounded-2xl border px-2 py-2.5 transition-all ${
-                    active
-                      ? "border-transparent bg-gradient-to-br from-violet-600 to-fuchsia-600 text-da-onaccent shadow-lg shadow-fuchsia-500/20"
-                      : "border-slate-800 bg-da-raised text-slate-300 hover:border-slate-600"
+                  title={open ? undefined : "Indisponível no momento"}
+                  className={`flex flex-col items-center rounded-2xl border px-1 py-2.5 transition-all ${
+                    !open
+                      ? "cursor-not-allowed border-dashed border-slate-800 text-slate-600 opacity-60"
+                      : active
+                        ? "border-transparent bg-gradient-to-br from-violet-600 to-fuchsia-600 text-da-onaccent shadow-lg shadow-fuchsia-500/20"
+                        : "border-emerald-500/40 bg-da-raised text-slate-200 hover:border-emerald-400"
                   }`}
                 >
                   <span className={`text-[11px] font-semibold uppercase ${active ? "opacity-90" : "text-slate-500"}`}>
@@ -136,12 +143,15 @@ export default function BookingForm({
                   </span>
                   <span className="font-display text-xl font-bold">{d.getDate()}</span>
                   <span className={`text-[11px] ${active ? "opacity-90" : "text-slate-500"}`}>
-                    {d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
+                    {open ? d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "") : "indisp."}
                   </span>
                 </button>
               );
             })}
           </div>
+          <p className="text-xs text-slate-500">
+            Atendo aos {availableWeekdaysLabel()}. Os outros dias estão indisponíveis no momento.
+          </p>
         </Step>
 
         <Step n={4} title="Horário">
