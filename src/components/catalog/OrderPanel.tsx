@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { whatsappUrl, WHATSAPP_PHONE } from "@/engine/contact";
+import { copyText, whatsappUrl, WHATSAPP_PHONE } from "@/engine/contact";
 import { ContactRequest, requestText, validateRequest } from "@/engine/requests";
 import { PickMode, useCatalogPick } from "@/engine/store";
 import { ApiError, sendContactRequest } from "@/services/api";
@@ -13,7 +13,8 @@ import OrderForm from "./OrderForm";
 // PAINEL DE PEDIDO — as duas abas do fim do catálogo: pedir orçamento e
 // agendar consultoria. O pedido vai pra API (e-mail pro Danilo); se o
 // e-mail não estiver configurado ou o servidor falhar, o pedido vai pelo
-// WhatsApp, já escrito (copiado pra colar, ou na conversa se houver o número).
+// WhatsApp, já escrito: na conversa, se houver o número (WHATSAPP_PHONE); senão
+// a mensagem aparece na tela com o botão de copiar, pra colar na conversa.
 // ============================================================================
 
 type Done = { request: ContactRequest; protocol: string; via: "email" | "whatsapp" };
@@ -23,16 +24,61 @@ const TABS: { id: PickMode; label: string }[] = [
   { id: "agendamento", label: "Agendar consultoria" },
 ];
 
-async function openWhatsApp(request: ContactRequest) {
-  const text = requestText(request);
-  if (!WHATSAPP_PHONE) {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      // sem permissão: a conversa abre do mesmo jeito
-    }
+function openWhatsApp(request: ContactRequest) {
+  window.open(whatsappUrl(requestText(request)), "_blank", "noopener,noreferrer");
+}
+
+/**
+ * Sem o número no site, o link do WhatsApp não leva texto: a mensagem fica à
+ * vista, com o botão de copiar (que confirma se copiou) antes de abrir a conversa.
+ */
+function MessageToPaste({ request }: { request: ContactRequest }) {
+  const text = requestText(request).replace(/\*/g, "");
+  const [copied, setCopied] = useState<"sim" | "nao" | null>(null);
+
+  async function copyAndOpen() {
+    const ok = await copyText(requestText(request));
+    setCopied(ok ? "sim" : "nao");
+    if (ok) openWhatsApp(request);
   }
-  window.open(whatsappUrl(text), "_blank", "noopener,noreferrer");
+
+  return (
+    <div className="flex w-full max-w-lg flex-col gap-3 text-left">
+      <ol className="flex flex-col gap-1 text-sm text-slate-400">
+        <li>
+          <span className="font-semibold text-white">1.</span> Toque em <span className="font-semibold text-white">Copiar e abrir o WhatsApp</span>
+        </li>
+        <li>
+          <span className="font-semibold text-white">2.</span> Na conversa, cole a mensagem e envie
+        </li>
+      </ol>
+      <textarea
+        readOnly
+        value={text}
+        rows={8}
+        onFocus={(e) => e.currentTarget.select()}
+        aria-label="Mensagem do pedido"
+        className="da-input resize-none font-mono text-xs leading-relaxed"
+      />
+      <button onClick={copyAndOpen} className="da-btn-accent !bg-none !bg-[#25d366] !shadow-emerald-500/30">
+        <SocialIcon id="whatsapp" className="h-5 w-5" /> Copiar e abrir o WhatsApp
+      </button>
+      {copied === "sim" && (
+        <p className="text-center text-sm font-medium text-emerald-300" role="status">
+          ✓ Mensagem copiada! Agora é só colar na conversa.
+        </p>
+      )}
+      {copied === "nao" && (
+        <p className="text-center text-sm font-medium text-amber-300" role="alert">
+          O navegador não deixou copiar. Selecione o texto acima, copie e depois{" "}
+          <button onClick={() => openWhatsApp(request)} className="underline underline-offset-4">
+            abra o WhatsApp
+          </button>
+          .
+        </p>
+      )}
+    </div>
+  );
 }
 
 function DoneView({ done, onReset }: { done: Done; onReset: () => void }) {
@@ -56,19 +102,27 @@ function DoneView({ done, onReset }: { done: Done; onReset: () => void }) {
               Protocolo <span className="font-bold text-white">{done.protocol}</span>
             </p>
           )}
-          <button onClick={() => openWhatsApp(done.request)} className="da-btn-secondary">
-            <SocialIcon id="whatsapp" className="h-4 w-4 text-emerald-400" /> Quer agilizar? Envie também pelo WhatsApp
-          </button>
+          {WHATSAPP_PHONE ? (
+            <button onClick={() => openWhatsApp(done.request)} className="da-btn-secondary">
+              <SocialIcon id="whatsapp" className="h-4 w-4 text-emerald-400" /> Quer agilizar? Envie também pelo WhatsApp
+            </button>
+          ) : (
+            <MessageToPaste request={done.request} />
+          )}
         </>
       ) : (
         <>
           <h3 className="font-display text-2xl font-bold text-white sm:text-3xl">Seu pedido está pronto!</h3>
-          <p className="max-w-md text-slate-400">
-            Agora é só enviar pelo WhatsApp: {WHATSAPP_PHONE ? "a conversa abre com a mensagem já escrita." : "a mensagem vai copiada — na conversa, é só colar e enviar."}
-          </p>
-          <button onClick={() => openWhatsApp(done.request)} className="da-btn-accent !bg-none !bg-[#25d366] !shadow-emerald-500/30">
-            <SocialIcon id="whatsapp" className="h-5 w-5" /> Enviar pelo WhatsApp
-          </button>
+          {WHATSAPP_PHONE ? (
+            <>
+              <p className="max-w-md text-slate-400">Agora é só enviar pelo WhatsApp: a conversa abre com a mensagem já escrita.</p>
+              <button onClick={() => openWhatsApp(done.request)} className="da-btn-accent !bg-none !bg-[#25d366] !shadow-emerald-500/30">
+                <SocialIcon id="whatsapp" className="h-5 w-5" /> Enviar pelo WhatsApp
+              </button>
+            </>
+          ) : (
+            <MessageToPaste request={done.request} />
+          )}
         </>
       )}
       <button onClick={onReset} className="text-sm font-semibold text-slate-500 underline-offset-4 hover:text-white hover:underline">

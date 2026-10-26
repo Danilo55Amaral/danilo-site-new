@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ContactForm, SERVICE_OPTIONS, WHATSAPP_PHONE, buildMessage, whatsappUrl } from "@/engine/contact";
+import { ContactForm, SERVICE_OPTIONS, WHATSAPP_PHONE, buildMessage, copyText, whatsappUrl } from "@/engine/contact";
 import { CATALOG_PATH, SOCIALS } from "@/engine/profile";
 import Reveal from "./Reveal";
 import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, SendIcon, SocialIcon, TagIcon } from "./Icons";
@@ -18,6 +18,7 @@ const EMPTY: ContactForm = { name: "", service: "sites", message: "" };
 export default function Contact() {
   const [form, setForm] = useState<ContactForm>(EMPTY);
   const [sent, setSent] = useState(false);
+  const [copied, setCopied] = useState(true);
 
   const canSend = form.name.trim().length > 1 && form.message.trim().length > 4;
 
@@ -25,13 +26,7 @@ export default function Contact() {
     e.preventDefault();
     if (!canSend) return;
     const message = buildMessage(form);
-    if (!WHATSAPP_PHONE) {
-      try {
-        await navigator.clipboard.writeText(message);
-      } catch {
-        // sem permissão de área de transferência: a conversa abre do mesmo jeito
-      }
-    }
+    if (!WHATSAPP_PHONE) setCopied(await copyText(message));
     window.open(whatsappUrl(message), "_blank", "noopener,noreferrer");
     setSent(true);
   }
@@ -157,7 +152,21 @@ export default function Contact() {
                   <SendIcon className="h-4 w-4" /> Enviar pelo WhatsApp
                 </button>
 
-                {sent ? (
+                {sent && !copied ? (
+                  <div className="flex flex-col gap-2" role="alert">
+                    <p className="text-xs font-medium text-amber-300">
+                      O navegador não deixou copiar a mensagem. Copie o texto abaixo e cole na conversa do WhatsApp:
+                    </p>
+                    <textarea
+                      readOnly
+                      rows={6}
+                      value={buildMessage(form)}
+                      onFocus={(e) => e.currentTarget.select()}
+                      aria-label="Mensagem para copiar"
+                      className="da-input resize-none font-mono text-xs"
+                    />
+                  </div>
+                ) : sent ? (
                   <p className="flex items-start gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs leading-relaxed text-emerald-300" role="status">
                     <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" />
                     {WHATSAPP_PHONE
